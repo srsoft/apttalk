@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    타이틀 수정
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
