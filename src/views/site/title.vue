@@ -34,8 +34,6 @@ export default {
     async save () {
       try {
         await this.$firebase.database().ref().child('site').update({ title: this.text })
-      } catch (error) {
-        console.log(error.message)
       } finally {
         this.dialog = false
       }
