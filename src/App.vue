@@ -1,33 +1,68 @@
 <template>
-  <div id="app">
-    타이틀 수정
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app>
+    <v-app-bar
+      app
+      color="primary"
+      dark
+    >
+      <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <SiteTitle :title="site.title" />
+      <v-spacer/>
+    </v-app-bar>
+    <v-navigation-drawer app v-model="drawer">
+      <SiteMenu :items="site.menu" />
+    </v-navigation-drawer>
+    <v-content>
+      <router-view/>
+    </v-content>
+    <SiteFooter :footer="site.footer" />
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import SiteTitle from '@/views/site/title'
+import SiteFooter from '@/views/site/footer'
+import SiteMenu from '@/views/site/menu'
 
-#nav {
-  padding: 30px;
+export default {
+  components: { SiteTitle, SiteFooter, SiteMenu },
+  name: 'App',
+  data () {
+    return {
+      drawer: false,
+      site: {
+        menu: [
+          {
+            icon: 'mdi-home',
+            subItems: [
+              { title: 'Dashboard', to: '/' },
+              { title: 'About', to: '/about' }
+            ],
+            title: 'home'
+          }
+        ],
+        title: 'page title',
+        footer: 'page footer'
+      }
+    }
+  },
+  created () {
+    this.subscribe()
+  },
+  methods: {
+    subscribe () {
+      this.$firebase.database().ref().child('site').on('value', (sn) => {
+        const v = sn.val()
+        console.log(v)
+        if (!v) {
+          this.$firebase.database().ref().child('site').set(this.site)
+          return
+        }
+        this.site = v
+      }, (e) => {
+        console.log(e.message)
+      })
+    }
+  }
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+</script>
