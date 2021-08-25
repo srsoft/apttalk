@@ -1,5 +1,5 @@
 <template>
-  <v-card>board list {{ document }}</v-card>
+  <v-card>page list {{ document }}</v-card>
 </template>
 
 <script>

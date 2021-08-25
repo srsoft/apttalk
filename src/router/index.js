@@ -17,8 +17,28 @@ const routes = [
   },
   {
     path: '/board',
-    name: 'board',
+    name: 'Board',
     component: () => import('../views/board/')
+  },
+  {
+    path: '/storage',
+    name: 'Storage',
+    component: () => import('../views/storage')
+  },
+  {
+    path: '/editor',
+    name: 'Editor',
+    component: () => import('../views/editor')
+  },
+  {
+    path: '/:collection/:document',
+    name: 'collection-document',
+    component: () => import('../views/renderer')
+  },
+  {
+    path: '*',
+    name: 'error',
+    component: () => import('../views/error')
   }
 ]
 
