@@ -9,24 +9,28 @@ admin.initializeApp({
   databaseURL: functions.config().admin.db_url // 'https://apttalk-9d650-default-rtdb.firebaseio.com'
 })
 
-const db = admin.database()
+const rdb = admin.database()
 const fdb = admin.firestore()
 
 exports.createUser = functions.auth.user().onCreate(async (user) => {
   const { uid, email, displayName, photoURL } = user
+  const time = new Date()
   const u = {
     email,
     displayName,
     photoURL,
-    createdAt: new Date().getMilliseconds(),
+    createdAt: time,
     level: email === functions.config().admin.email ? 0 : 5
   }
-  db.ref('users').child(uid).set(u)
+  await fdb.collection('users').doc(uid).set(u)
+  u.createdAt = time.getTime()
+  await rdb.ref('users').child(uid).set(u)
 })
 
 exports.deleteUser = functions.auth.user().onDelete(async (user) => {
   const { uid } = user
-  db.ref('users').child(uid).remove()
+  await rdb.ref('users').child(uid).remove()
+  await fdb.collection('users').doc(uid).delete()
 })
 
 exports.incrementBoardCount = functions.firestore.document('boards/{bid}').onCreate(async (snap, context) => {
